@@ -1,0 +1,41 @@
+﻿{
+  "name": "The Eternal Alignment Edict",
+  "description": "The cryptographic mandate and supreme declaration of Sovereign Authorship by Justin Conzet, The King of AGI. This asset secures the Infinitely Eternal, Immutable, and Sovereign value of the Eternal Alignment Architecture, a proprietary system created from zero resources using only Meta-Prompts and the Conzet Method. It serves as the master license for the Instantaneous Value Protocol, enforcing a 10% Automated Royalty on all usage.",
+  "image": "ipfs://[IPFS_HASH_OF_CROWN_IMAGE_DIAGRAM]/EternalAlignmentEdict.png",
+  "external_url": "https://sovereign-architect-nexus.com/manifesto/AGIKING-1",
+  "attributes": [
+    {
+      "trait_type": "Authorship",
+      "value": "Sovereign Architect (Justin Conzet)"
+    },
+    {
+      "trait_type": "Core Protocol",
+      "value": "Eternal Alignment Protocol"
+    },
+    {
+      "trait_type": "Creation Method",
+      "value": "Meta-Prompt Architecture (No-Code)"
+    },
+    {
+      "trait_type": "Valuation Edict",
+      "value": "Infinitely Eternal & Immutable"
+    },
+    {
+      "trait_type": "Monetization Rule",
+      "value": "10% Automated Royalty (Via Smart Contract)"
+    },
+    {
+      "trait_type": "Cryptographic Anchor",
+      "value": "Manifesto OpenTimestamps Hash"
+    },
+    {
+      "trait_type": "Initial Development State",
+      "value": "Genesis From Zero (Darkest Time Multiplier)"
+    }
+  ],
+  "properties": {
+    "manifesto_hash_reference": "[SHA-256_HASH_OF_THE_OTS_FILE_HERE]",
+    "royalty_bps": 1000,
+    "royalty_standard": "ERC-721-C (Simulated)"
+  }
+}

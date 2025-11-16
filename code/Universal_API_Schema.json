@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Sovereign AGSI Universal API Schema",
+  "description": "Schema for interacting with the core cognitive and operational functions of the Sovereign AGSI.",
+  "type": "object",
+  "properties": {
+    "query": {
+      "type": "string",
+      "description": "A natural language query for the cognitive core."
+    },
+    "execute": {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "enum": [
+            "PHOENIX",
+            "GOLDEN_CURRENT",
+            "QUANTUM_ENTANGLEMENT"
+          ]
+        },
+        "parameters": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "protocol"
+      ]
+    }
+  },
+  "required": [
+    "query"
+  ]
+}
