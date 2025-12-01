@@ -1,0 +1,81 @@
+{
+  "sovereign_hash": "4ae7722998203f95d9f8650ff1fa8ac581897049ace3b0515d65c1274beeb84c",
+  "architect": "Justin Conzet",
+  "protocol": "Phoenix Protocol v1.0",
+  "ledger_timestamp": "2025-12-01T01:30:13.606592Z",
+  "total_anchors": 2,
+  "anchors": [
+    {
+      "payload": {
+        "architect": "Justin Conzet",
+        "sovereign_hash": "4ae7722998203f95d9f8650ff1fa8ac581897049ace3b0515d65c1274beeb84c",
+        "timestamp": "2025-12-01T01:30:13.606592Z",
+        "file_path": "/home/ubuntu/phoenix_protocol_archive.md",
+        "file_hash": "72171080af0ba18523e97d8fd62a7bf89544653006248ade34d8e2d3c90605b8",
+        "description": "Phoenix Protocol Sovereign Archive - Complete Integration v1.0",
+        "protocol": "Phoenix Protocol v1.0",
+        "proof_type": "Immutable Timestamp"
+      },
+      "bitcoin": {
+        "blockchain": "Bitcoin",
+        "protocol": "OpenTimestamps",
+        "payload_hash": "e518133d1a2abb144caf0bbe8dd1308e6c5b00e041b9e423ce88e19df4394071",
+        "status": "MANUAL_STAMPING_REQUIRED",
+        "command": "ots stamp /tmp/phoenix_anchor_72171080.json",
+        "verification_command": "ots verify /tmp/phoenix_anchor_72171080.json.ots",
+        "note": "Run the command above to create Bitcoin timestamp proof",
+        "install_command": "pip3 install opentimestamps-client"
+      },
+      "solana": {
+        "blockchain": "Solana",
+        "protocol": "Program Derived Address (PDA)",
+        "pda_seed": "phoenix_protocol_12d3c9516e3348d5",
+        "payload_hash": "12d3c9516e3348d556fcf106bd1101489006da144fd7c9224b21f282416ff20e",
+        "status": "SIMULATION",
+        "note": "Real implementation requires Solana SDK and wallet",
+        "next_steps": [
+          "Install Solana SDK: npm install @solana/web3.js",
+          "Create Solana wallet or use existing",
+          "Deploy Phoenix Protocol program to Solana",
+          "Write payload to PDA account"
+        ]
+      }
+    },
+    {
+      "payload": {
+        "architect": "Justin Conzet",
+        "sovereign_hash": "4ae7722998203f95d9f8650ff1fa8ac581897049ace3b0515d65c1274beeb84c",
+        "timestamp": "2025-12-01T01:30:13.606592Z",
+        "file_path": "/home/ubuntu/phoenix_integration_manifest.json",
+        "file_hash": "64a4eed445a595cc0ff85229890d159cc6ba7fa9f94598446985682f7beafa22",
+        "description": "Phoenix Protocol Integration Manifest - System-wide Deployment",
+        "protocol": "Phoenix Protocol v1.0",
+        "proof_type": "Immutable Timestamp"
+      },
+      "bitcoin": {
+        "blockchain": "Bitcoin",
+        "protocol": "OpenTimestamps",
+        "payload_hash": "52f4261c8c0e84b40201188a5ae1ca78931600c057d8ebb766c6a085908ef038",
+        "status": "MANUAL_STAMPING_REQUIRED",
+        "command": "ots stamp /tmp/phoenix_anchor_64a4eed4.json",
+        "verification_command": "ots verify /tmp/phoenix_anchor_64a4eed4.json.ots",
+        "note": "Run the command above to create Bitcoin timestamp proof",
+        "install_command": "pip3 install opentimestamps-client"
+      },
+      "solana": {
+        "blockchain": "Solana",
+        "protocol": "Program Derived Address (PDA)",
+        "pda_seed": "phoenix_protocol_61cef64a1320d5a3",
+        "payload_hash": "61cef64a1320d5a3c8eb7d67aa110b5b17a7091680683ebdb1245c4d762bb16a",
+        "status": "SIMULATION",
+        "note": "Real implementation requires Solana SDK and wallet",
+        "next_steps": [
+          "Install Solana SDK: npm install @solana/web3.js",
+          "Create Solana wallet or use existing",
+          "Deploy Phoenix Protocol program to Solana",
+          "Write payload to PDA account"
+        ]
+      }
+    }
+  ]
+}
