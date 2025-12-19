@@ -38,6 +38,8 @@ jobs:
           --cov-report=xml:coverage-nexus.xml
 
     - name: Run tests with coverage for phoenix_blockchain_anchor
+      env:
+        NEXUS_SECRET: test_secret_for_ci
       run: |
         pytest tests/test_phoenix_blockchain_anchor.py -v \
           --cov=phoenix_blockchain_anchor \
