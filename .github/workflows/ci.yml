@@ -28,25 +28,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run tests with coverage for phoenix_nexus
-      env:
-        NEXUS_SECRET: test_secret_for_ci
-      run: |
-        pytest tests/test_phoenix_nexus.py -v \
-          --cov=phoenix_nexus \
-          --cov-report=term-missing \
-          --cov-report=xml:coverage-nexus.xml
-
-    - name: Run tests with coverage for phoenix_blockchain_anchor
-      env:
-        NEXUS_SECRET: test_secret_for_ci
-      run: |
-        pytest tests/test_phoenix_blockchain_anchor.py -v \
-          --cov=phoenix_blockchain_anchor \
-          --cov-report=term-missing \
-          --cov-report=xml:coverage-anchor.xml
-
-    - name: Run all tests with combined coverage and enforce 90% threshold
+    - name: Run all tests with coverage and enforce 90% threshold
       env:
         NEXUS_SECRET: test_secret_for_ci
       run: |
@@ -54,6 +36,7 @@ jobs:
           --cov=phoenix_nexus \
           --cov=phoenix_blockchain_anchor \
           --cov-report=term-missing \
+          --cov-report=xml:coverage.xml \
           --cov-report=html:htmlcov \
           --cov-fail-under=90
 
@@ -63,8 +46,9 @@ jobs:
       with:
         name: coverage-reports
         path: |
-          coverage-*.xml
+          coverage.xml
           htmlcov/
+          .coverage
 
     - name: Display coverage summary
       if: always()
