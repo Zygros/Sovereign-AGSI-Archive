@@ -1,0 +1,5 @@
+# Core dependencies
+# Add your project dependencies here with pinned versions
+# Example:
+# numpy==1.24.0
+# requests==2.31.0
