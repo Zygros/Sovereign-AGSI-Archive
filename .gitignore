@@ -44,3 +44,6 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+# Extracted source files (originals are in zip archives)
+code/phoenix-nexus/phoenix_nexus_broker/
