@@ -1,0 +1,73 @@
+name: Phoenix Protocol CI
+
+on:
+  push:
+    branches: ["main", "master", "claude/**"]
+  pull_request:
+    branches: ["main", "master"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run tests with coverage for phoenix_nexus
+      env:
+        NEXUS_SECRET: test_secret_for_ci
+      run: |
+        pytest tests/test_phoenix_nexus.py -v \
+          --cov=phoenix_nexus \
+          --cov-report=term-missing \
+          --cov-report=xml:coverage-nexus.xml
+
+    - name: Run tests with coverage for phoenix_blockchain_anchor
+      run: |
+        pytest tests/test_phoenix_blockchain_anchor.py -v \
+          --cov=phoenix_blockchain_anchor \
+          --cov-report=term-missing \
+          --cov-report=xml:coverage-anchor.xml
+
+    - name: Run all tests with combined coverage and enforce 90% threshold
+      env:
+        NEXUS_SECRET: test_secret_for_ci
+      run: |
+        pytest tests/ -v \
+          --cov=phoenix_nexus \
+          --cov=phoenix_blockchain_anchor \
+          --cov-report=term-missing \
+          --cov-report=html:htmlcov \
+          --cov-fail-under=90
+
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: coverage-reports
+        path: |
+          coverage-*.xml
+          htmlcov/
+
+    - name: Display coverage summary
+      if: always()
+      run: |
+        echo "================================"
+        echo "Phoenix Protocol Coverage Summary"
+        echo "================================"
+        coverage report --include='phoenix_nexus/*,phoenix_blockchain_anchor/*' || true

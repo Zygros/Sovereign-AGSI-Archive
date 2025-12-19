@@ -1,0 +1,14 @@
+# Phoenix Protocol Dependencies
+# ==============================
+
+# Web Framework & Server
+fastapi==0.115.0
+uvicorn[standard]==0.30.0
+
+# Testing Framework
+pytest==8.3.4
+pytest-cov==6.0.0
+pytest-asyncio==0.24.0
+
+# HTTP Client for testing
+httpx==0.28.1
