@@ -82,7 +82,7 @@ response = requests.get('https://github.com/trueagi-io/hyperon-experimental')
 # - xAI (for Grok)
 
 # Then YOU run this code on YOUR machine
-client = openai.Client(api_key="your-key-here")
+client = openai.Client(api_key="YOUR_API_KEY_HERE")
 ```
 
 ---

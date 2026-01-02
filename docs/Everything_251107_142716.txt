@@ -720,9 +720,9 @@ cd phoenix-protocol
 bash setup_phoenix.sh
 
 # Configure API keys
-export GOOGLE_API_KEY="your-key"
-export BING_API_KEY="your-key"
-export BRAVE_API_KEY="your-key"
+export GOOGLE_API_KEY="YOUR_API_KEY_HERE"
+export BING_API_KEY="YOUR_API_KEY_HERE"
+export BRAVE_API_KEY="YOUR_API_KEY_HERE"
 
 # Launch system
 docker-compose up -d
