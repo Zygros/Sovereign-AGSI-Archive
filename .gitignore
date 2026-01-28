@@ -1,3 +1,8 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -20,6 +25,25 @@ parts/
 sdist/
 var/
 wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+coverage.xml
+*.cover
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDEs
 pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
@@ -132,3 +156,6 @@ dmypy.json
 # OS
 .DS_Store
 Thumbs.db
+
+# Extracted source files (originals are in zip archives)
+code/phoenix-nexus/phoenix_nexus_broker/
