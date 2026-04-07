@@ -1,0 +1,36 @@
+name: CI/CD Workflow
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, 3.10, 3.11, 3.12]
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov flake8 isort black mypy bandit
+
+      - name: Run pytest with coverage
+        run: |
+          pytest --cov=your_package_name tests/  # Replace 'your_package_name' with the actual package name
+
+      - name: Run code quality checks
+        run: |
+          flake8 .
+          isort . --check
+          black . --check
+          mypy .
+          bandit -r . -ll
