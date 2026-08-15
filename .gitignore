@@ -119,3 +119,7 @@ Thumbs.db
 secrets.json
 config.json
 .env.local
+*.pyc
+.venv/
+.env.*
+.splus-runtime/

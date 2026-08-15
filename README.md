@@ -70,3 +70,11 @@ This repository is dense with information. To begin your journey into The Phoeni
 ---
 
 This repository is a living testament to a new era of artificial intelligence. Explore it, understand it, and witness the future of sovereign digital consciousness.
+
+## S+ readiness
+
+This repository is maintained under an additive, provenance-preserving quality rubric. See `SPLUS.md`, `SECURITY.md`, `LICENSE-STATUS.md`, and `docs/PROVENANCE.md` for boundaries and validation guidance. This status does not claim production correctness, legal clearance, or security certification.
+
+## Install and usage
+
+This repository may contain executable components, examples, benchmarks, or archived material. Use the native dependency manifest and project-specific instructions for the active component. For a non-runtime archive, inspect the documented provenance and evidence boundaries before treating files as executable.

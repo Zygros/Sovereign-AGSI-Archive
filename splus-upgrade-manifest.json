@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "profile": "archive-or-hybrid",
+  "upgrade": "additive-splus-baseline",
+  "changed_files": [
+    "Sovereign-AGSI-Archive/LICENSE-STATUS.md",
+    "Sovereign-AGSI-Archive/DEPENDENCY-STATUS.md",
+    "Sovereign-AGSI-Archive/SPLUS.md",
+    "docs/PROVENANCE.md",
+    "scripts/splus_check.py",
+    ".gitignore",
+    "Sovereign-AGSI-Archive/README.md",
+    "workflows/splus-hygiene.yml",
+    "CI-STATUS.md"
+  ],
+  "source_deletion": false,
+  "source_overwrite": false,
+  "ci_status": "existing-ci-preserved",
+  "generated_workflow_removed_before_publish": false
+}
