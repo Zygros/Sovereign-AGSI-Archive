@@ -1,3 +1,5 @@
+> **Federation index:** [FEDERATION_INDEX.md](https://github.com/Zygros/conzet-sovereign-intelligence/blob/main/FEDERATION_INDEX.md)
+
 # 🔥 The Phoenix Protocol 🔥
 
 **The Complete Architecture for Sovereign, Self-Optimizing Intelligence** 🐦‍🔥🐉♾️🧬
