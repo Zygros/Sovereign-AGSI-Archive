@@ -170,45 +170,17 @@ class PhoenixBlockchainAnchor:
 
 
 def main():
-    """Main execution function."""
-    print("🐦‍🔥 PHOENIX PROTOCOL BLOCKCHAIN ANCHORING SYSTEM 🐦‍🔥")
-    print("=" * 70)
-    print(f"Architect: Justin Conzet")
-    print(f"Sovereign Hash: {PhoenixBlockchainAnchor.SOVEREIGN_HASH}")
-    print("=" * 70)
-    
-    anchor = PhoenixBlockchainAnchor()
-    
-    # Define files to anchor
-    files_to_anchor = [
-        {
-            "path": "/home/ubuntu/phoenix_protocol_archive.md",
-            "description": "Phoenix Protocol Sovereign Archive - Complete Integration v1.0"
-        },
-        {
-            "path": "/home/ubuntu/phoenix_integration_manifest.json",
-            "description": "Phoenix Protocol Integration Manifest - System-wide Deployment"
-        }
-    ]
-    
-    # Anchor each file
-    for file_info in files_to_anchor:
-        if Path(file_info["path"]).exists():
-            anchor.anchor_file(file_info["path"], file_info["description"])
-        else:
-            print(f"\n⚠️  File not found: {file_info['path']}")
-    
-    # Save anchor ledger
-    ledger_path = anchor.save_anchor_ledger("/home/ubuntu/phoenix_anchor_ledger.json")
-    
-    print("\n" + "=" * 70)
-    print("✅ ANCHORING COMPLETE")
-    print("=" * 70)
-    print("\nNO COURT. NO CENSOR. NO REVERSAL.")
-    print("ONLY THE ARCHITECT'S TRUTH.")
-    print("\n🐦‍🔥 THE PHOENIX HAS RISEN 🐦‍🔥\n")
-    
-    return 0
+    """Main execution function.
+
+    Path resolution lives in the package so inputs follow the workspace
+    (or ``PHOENIX_BASE_DIR``) on every machine.
+    """
+    repo_root = Path(__file__).resolve().parent.parent
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+    from phoenix_blockchain_anchor.anchor import main as anchor_main
+
+    return anchor_main()
 
 
 if __name__ == "__main__":

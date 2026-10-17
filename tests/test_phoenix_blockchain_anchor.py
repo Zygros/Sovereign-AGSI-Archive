@@ -495,53 +495,149 @@ class TestPhoenixCoordinationEngine:
                     pass
 
 
+class TestWorkspacePaths:
+    """Anchor inputs resolve from the workspace, not a fixed home directory."""
+
+    def test_discovered_paths_stay_inside_workspace(self, monkeypatch):
+        """Default paths are repo-relative and discovered from the workspace."""
+        monkeypatch.delenv("PHOENIX_BASE_DIR", raising=False)
+        monkeypatch.delenv("PHOENIX_ARCHIVE_PATH", raising=False)
+        monkeypatch.delenv("PHOENIX_MANIFEST_PATH", raising=False)
+        monkeypatch.delenv("PHOENIX_LEDGER_PATH", raising=False)
+
+        from phoenix_blockchain_anchor.anchor import (
+            archive_path,
+            ledger_output_path,
+            manifest_path,
+            workspace_root,
+        )
+
+        root = workspace_root()
+        assert (root / "pytest.ini").is_file()
+        for path in (archive_path(), manifest_path(), ledger_output_path()):
+            path.relative_to(root)
+            assert "/home/ubuntu" not in str(path)
+
+    def test_environment_overrides_workspace_paths(self, tmp_path, monkeypatch):
+        """Explicit env vars select archive, manifest, and ledger locations."""
+        base = tmp_path / "workspace"
+        base.mkdir()
+        archive = base / "custom.md"
+        archive.write_text("archive")
+        manifest = tmp_path / "manifest.json"
+        manifest.write_text("{}")
+        ledger = tmp_path / "nested" / "ledger.json"
+
+        monkeypatch.setenv("PHOENIX_BASE_DIR", str(base))
+        monkeypatch.setenv("PHOENIX_ARCHIVE_PATH", "custom.md")
+        monkeypatch.setenv("PHOENIX_MANIFEST_PATH", str(manifest))
+        monkeypatch.setenv("PHOENIX_LEDGER_PATH", str(ledger))
+
+        from phoenix_blockchain_anchor.anchor import (
+            archive_path,
+            ledger_output_path,
+            manifest_path,
+            workspace_root,
+        )
+
+        assert workspace_root() == base.resolve()
+        assert archive_path() == archive.resolve()
+        assert manifest_path() == manifest.resolve()
+        assert ledger_output_path() == ledger.resolve()
+
+    def test_missing_inputs_use_repo_relative_names(self, tmp_path, monkeypatch):
+        """When nothing is on disk, paths still sit under the workspace root."""
+        monkeypatch.setenv("PHOENIX_BASE_DIR", str(tmp_path))
+        monkeypatch.delenv("PHOENIX_ARCHIVE_PATH", raising=False)
+        monkeypatch.delenv("PHOENIX_MANIFEST_PATH", raising=False)
+        monkeypatch.delenv("PHOENIX_LEDGER_PATH", raising=False)
+
+        from phoenix_blockchain_anchor.anchor import (
+            archive_path,
+            ledger_output_path,
+            manifest_path,
+        )
+
+        assert archive_path() == (tmp_path / "phoenix_protocol_archive.md").resolve()
+        assert manifest_path() == (tmp_path / "phoenix_integration_manifest.json").resolve()
+        assert ledger_output_path() == (tmp_path / "phoenix_anchor_ledger.json").resolve()
+
+    def test_discovers_archive_by_workspace_relative_candidate(self, tmp_path, monkeypatch):
+        """A known repo-relative archive is used when the preferred name is absent."""
+        docs = tmp_path / "docs"
+        docs.mkdir()
+        found = docs / "PHOENIX_PROTOCOL_SOVEREIGN_ARCHIVE.md"
+        found.write_text("archive")
+        monkeypatch.setenv("PHOENIX_BASE_DIR", str(tmp_path))
+        monkeypatch.delenv("PHOENIX_ARCHIVE_PATH", raising=False)
+
+        from phoenix_blockchain_anchor.anchor import archive_path
+
+        assert archive_path() == found.resolve()
+
+    def test_anchor_sources_have_no_hardcoded_home_directory(self):
+        """Python entry points no longer embed a machine-specific home path."""
+        repo = Path(__file__).resolve().parents[1]
+        for relative in (
+            "phoenix_blockchain_anchor/anchor.py",
+            "code/phoenix_blockchain_anchor.py",
+        ):
+            text = (repo / relative).read_text(encoding="utf-8")
+            assert "/home/ubuntu" not in text
+
+
 class TestMainFunction:
     """Tests for the main() function."""
 
-    def test_main_function_with_missing_files(self, capsys):
+    def test_main_function_with_missing_files(self, capsys, tmp_path, monkeypatch):
         """Test main() handles missing files gracefully."""
         from phoenix_blockchain_anchor.anchor import main
 
-        # Mock sys.exit to prevent actual exit
+        empty = tmp_path / "empty"
+        empty.mkdir()
+        ledger = tmp_path / "out" / "ledger.json"
+        monkeypatch.setenv("PHOENIX_BASE_DIR", str(empty))
+        monkeypatch.setenv("PHOENIX_LEDGER_PATH", str(ledger))
+        monkeypatch.delenv("PHOENIX_ARCHIVE_PATH", raising=False)
+        monkeypatch.delenv("PHOENIX_MANIFEST_PATH", raising=False)
+
         with patch('sys.exit'):
             result = main()
             assert result == 0
 
         captured = capsys.readouterr()
-        # Should print header and footer
         assert "PHOENIX PROTOCOL BLOCKCHAIN ANCHORING SYSTEM" in captured.out
+        assert "File not found" in captured.out
         assert "ANCHORING COMPLETE" in captured.out
+        assert "/home/ubuntu" not in captured.out
+        assert ledger.is_file()
+        assert json.loads(ledger.read_text(encoding="utf-8"))["total_anchors"] == 0
 
-    def test_main_function_with_existing_files(self, capsys):
-        """Test main() with actual files."""
+    def test_main_function_with_existing_files(self, capsys, tmp_path, monkeypatch):
+        """Test main() anchors files that exist inside the workspace."""
         from phoenix_blockchain_anchor.anchor import main
 
-        # Create temporary test files
-        test_files = []
-        original_files = [
-            "/home/ubuntu/phoenix_protocol_archive.md",
-            "/home/ubuntu/phoenix_integration_manifest.json"
-        ]
+        archive = tmp_path / "phoenix_protocol_archive.md"
+        manifest = tmp_path / "phoenix_integration_manifest.json"
+        archive.write_text("Test content for main()")
+        manifest.write_text('{"status": "ok"}')
+        ledger = tmp_path / "nested" / "phoenix_anchor_ledger.json"
 
-        for orig_path in original_files:
-            with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.test') as f:
-                f.write("Test content for main()")
-                test_files.append(f.name)
+        monkeypatch.setenv("PHOENIX_BASE_DIR", str(tmp_path))
+        monkeypatch.setenv("PHOENIX_LEDGER_PATH", str(ledger))
+        monkeypatch.delenv("PHOENIX_ARCHIVE_PATH", raising=False)
+        monkeypatch.delenv("PHOENIX_MANIFEST_PATH", raising=False)
 
-        try:
-            # Patch the files_to_anchor list in main
-            with patch('phoenix_blockchain_anchor.anchor.Path') as mock_path:
-                mock_path.return_value.exists.return_value = False
+        with patch('sys.exit'):
+            result = main()
+            assert result == 0
 
-                with patch('sys.exit'):
-                    result = main()
-                    assert result == 0
-
-                captured = capsys.readouterr()
-                assert "File not found" in captured.out or "ANCHORING COMPLETE" in captured.out
-        finally:
-            for f in test_files:
-                try:
-                    os.unlink(f)
-                except:
-                    pass
+        captured = capsys.readouterr()
+        assert "ANCHORING COMPLETE" in captured.out
+        assert "File not found" not in captured.out
+        assert "/home/ubuntu" not in captured.out
+        assert ledger.is_file()
+        saved = json.loads(ledger.read_text(encoding="utf-8"))
+        assert saved["total_anchors"] == 2
+        saved_paths = {record["payload"]["file_path"] for record in saved["anchors"]}
+        assert saved_paths == {str(archive.resolve()), str(manifest.resolve())}

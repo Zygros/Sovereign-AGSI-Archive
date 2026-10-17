@@ -11,10 +11,12 @@ Sovereign Hash: 4ae7722998203f95d9f8650ff1fa8ac581897049ace3b0515d65c1274beeb84c
 
 import hashlib
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Optional, Tuple
 
 
 class PhoenixBlockchainAnchor:
@@ -254,6 +256,85 @@ class KappaResultAnchor(PhoenixBlockchainAnchor):
         return output_path
 
 
+_WORKSPACE_MARKERS = ("pytest.ini", "setup.py")
+
+_ARCHIVE_CANDIDATES = (
+    "phoenix_protocol_archive.md",
+    "docs/PHOENIX_PROTOCOL_SOVEREIGN_ARCHIVE.md",
+    "README_COMPLETE_ARCHIVE.md",
+)
+
+_MANIFEST_CANDIDATES = (
+    "phoenix_integration_manifest.json",
+    "PHOENIX_PROTOCOL_TRANSFER_MANIFEST.md",
+    "docs/protocols/PHOENIX_PROTOCOL_TRANSFER_MANIFEST.md",
+    "splus-upgrade-manifest.json",
+)
+
+
+def workspace_root() -> Path:
+    """Return the directory used to locate anchor inputs.
+
+    ``PHOENIX_BASE_DIR`` overrides discovery. Otherwise the root is the
+    nearest ancestor of this file that contains ``pytest.ini`` or ``setup.py``.
+    """
+    override = os.environ.get("PHOENIX_BASE_DIR", "").strip()
+    if override:
+        return Path(override).expanduser().resolve()
+
+    start = Path(__file__).resolve().parent
+    for candidate in (start, *start.parents):
+        if any((candidate / marker).exists() for marker in _WORKSPACE_MARKERS):
+            return candidate
+    return start.parent
+
+
+def _path_from_env(base: Path, env_var: str) -> Optional[Path]:
+    raw = os.environ.get(env_var, "").strip()
+    if not raw:
+        return None
+    path = Path(raw).expanduser()
+    if not path.is_absolute():
+        path = base / path
+    return path.resolve()
+
+
+def _resolve_configured_path(base: Path, env_var: str, candidates: Tuple[str, ...]) -> Path:
+    explicit = _path_from_env(base, env_var)
+    if explicit is not None:
+        return explicit
+    for relative in candidates:
+        candidate = (base / relative).resolve()
+        if candidate.is_file():
+            return candidate
+    return (base / candidates[0]).resolve()
+
+
+def archive_path(base: Optional[Path] = None) -> Path:
+    """Path of the protocol archive, relative to the workspace unless overridden."""
+    root = base if base is not None else workspace_root()
+    return _resolve_configured_path(root, "PHOENIX_ARCHIVE_PATH", _ARCHIVE_CANDIDATES)
+
+
+def manifest_path(base: Optional[Path] = None) -> Path:
+    """Path of the integration manifest, relative to the workspace unless overridden."""
+    root = base if base is not None else workspace_root()
+    return _resolve_configured_path(root, "PHOENIX_MANIFEST_PATH", _MANIFEST_CANDIDATES)
+
+
+def ledger_output_path(base: Optional[Path] = None) -> Path:
+    """Where ``main`` writes the anchor ledger.
+
+    ``PHOENIX_LEDGER_PATH`` overrides the default ``phoenix_anchor_ledger.json``
+    inside the workspace root. Relative values are resolved against that root.
+    """
+    root = base if base is not None else workspace_root()
+    explicit = _path_from_env(root, "PHOENIX_LEDGER_PATH")
+    if explicit is not None:
+        return explicit
+    return (root / "phoenix_anchor_ledger.json").resolve()
+
+
 def main():
     """Main execution function."""
     print("🐦‍🔥 PHOENIX PROTOCOL BLOCKCHAIN ANCHORING SYSTEM 🐦‍🔥")
@@ -261,30 +342,32 @@ def main():
     print(f"Architect: Justin Conzet")
     print(f"Sovereign Hash: {PhoenixBlockchainAnchor.SOVEREIGN_HASH}")
     print("=" * 70)
-    
+
     anchor = PhoenixBlockchainAnchor()
-    
-    # Define files to anchor
+    base = workspace_root()
+
     files_to_anchor = [
         {
-            "path": "/home/ubuntu/phoenix_protocol_archive.md",
+            "path": str(archive_path(base)),
             "description": "Phoenix Protocol Sovereign Archive - Complete Integration v1.0"
         },
         {
-            "path": "/home/ubuntu/phoenix_integration_manifest.json",
+            "path": str(manifest_path(base)),
             "description": "Phoenix Protocol Integration Manifest - System-wide Deployment"
         }
     ]
-    
+
     # Anchor each file
     for file_info in files_to_anchor:
         if Path(file_info["path"]).exists():
             anchor.anchor_file(file_info["path"], file_info["description"])
         else:
             print(f"\n⚠️  File not found: {file_info['path']}")
-    
-    # Save anchor ledger
-    ledger_path = anchor.save_anchor_ledger("/home/ubuntu/phoenix_anchor_ledger.json")
+
+    # Save anchor ledger under the workspace (or PHOENIX_LEDGER_PATH).
+    ledger_path = ledger_output_path(base)
+    ledger_path.parent.mkdir(parents=True, exist_ok=True)
+    anchor.save_anchor_ledger(str(ledger_path))
     
     print("\n" + "=" * 70)
     print("✅ ANCHORING COMPLETE")

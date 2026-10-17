@@ -1,18 +1,36 @@
 """
 Test suite for Phoenix Nexus broker functionality.
+
+The broker refuses to import unless NEXUS_SECRET is set. These tests skip
+in that case. They do not invent a secret or report a pass.
 """
-import pytest
+import os
 import json
-from unittest.mock import Mock, patch, AsyncMock
-from fastapi.testclient import TestClient
-from phoenix_nexus.nexus_broker import app, clients, broadcast
+
+import pytest
+
+if not os.getenv("NEXUS_SECRET"):
+    pytest.skip(
+        "NEXUS_SECRET is not set; skipping Phoenix Nexus tests",
+        allow_module_level=True,
+    )
+
+pytest.importorskip("fastapi")
+pytest.importorskip("httpx")
+
+from unittest.mock import Mock, patch, AsyncMock  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
+from phoenix_nexus.nexus_broker import app, clients, broadcast  # noqa: E402
 
 
 @pytest.fixture
 def test_client():
-    """Create a test client for the FastAPI app."""
+    """Bind the broker to a test-only secret for this client.
+
+    Collection already required NEXUS_SECRET to be present. The value used
+    on the wire is fixture-local so tests never depend on a real credential.
+    """
     with patch.dict('os.environ', {'NEXUS_SECRET': 'test_secret_123'}):
-        # Reload the app to pick up the new environment variable
         from phoenix_nexus import nexus_broker
         nexus_broker.NEXUS_SECRET = 'test_secret_123'
         return TestClient(app)
