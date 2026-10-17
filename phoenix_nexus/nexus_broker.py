@@ -1,7 +1,7 @@
 import os
 import json
 import uuid
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, status
 from fastapi.responses import JSONResponse
@@ -34,7 +34,7 @@ clients: Dict[str, Dict[str, Any]] = {}
 # HELPER FUNCTIONS
 # ─────────────────────────────────────────────
 
-async def broadcast(message: Dict[str, Any], exclude_client_id: str | None = None):
+async def broadcast(message: Dict[str, Any], exclude_client_id: Optional[str] = None):
     """Broadcast a JSON message to all connected clients (optionally excluding one)."""
     dead_clients: List[str] = []
 
