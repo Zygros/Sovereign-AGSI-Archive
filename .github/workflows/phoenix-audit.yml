@@ -14,7 +14,7 @@ jobs:
       - name: Python audit
         run: |
           set -euo pipefail
-          if find . -type f -name '*.py' -not -path './.git/*' | grep -q .; then python -m compileall -q . -x '(^|/)(.git|venv|.venv|node_modules)/'; if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi; if [ -f pyproject.toml ] || [ -d tests ] || [ -d test ]; then python -m pip install pytest; python -m pytest -q; fi; else echo 'No Python source detected.'; fi
+          if find . -type f -name '*.py' -not -path './.git/*' -print -quit | grep -q .; then python -m compileall -q . -x '(^|/)(.git|venv|.venv|node_modules)/'; if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi; if [ -f pyproject.toml ] || [ -d tests ] || [ -d test ]; then python -m pip install pytest; python -m pytest -q; fi; else echo 'No Python source detected.'; fi
       - name: Node audit
         run: if [ -f package.json ]; then if [ -f package-lock.json ]; then npm ci; else npm install; fi; npm test --if-present; npm run build --if-present; else echo 'No Node package detected.'; fi
       - name: Go audit
