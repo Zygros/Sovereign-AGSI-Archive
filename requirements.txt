@@ -7,7 +7,7 @@ numpy>=1.21.0
 
 # Async support
 aiohttp>=3.8.0
-asyncio>=3.4.3
+# asyncio>=3.4.3  # autofix 2026-11-10: asyncio is Python stdlib; the PyPI 'asyncio' 3.4.3 backport breaks installs on Python 3
 
 # Data processing
 pandas>=1.3.0
